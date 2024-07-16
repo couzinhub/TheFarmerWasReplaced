@@ -1,0 +1,166 @@
+while True:
+
+	lowstock = 100
+	highstock = lowstock + 10000
+	
+	clear()
+
+
+	# Get Wood if too low on stock
+	while num_items(Items.Wood) < lowstock:
+			for i in range(get_world_size()):
+				for j in range(get_world_size()):
+					plant(Entities.Bush)
+					if can_harvest():
+						harvest()
+					if num_items(Items.Wood) > highstock:
+						break
+					move(North)
+				move(East)
+
+	# Get Hay if too low on stock
+	while num_items(Items.Hay) < lowstock:
+			for i in range(get_world_size()):
+				for j in range(get_world_size()):
+					if can_harvest():
+						harvest()
+					if num_items(Items.Hay) > highstock:
+						break
+					move(North)
+				move(East)
+
+	# Get pumpkin or carrot if too low on stock
+	if num_items(Items.Pumpkin) < lowstock or num_items(Items.Carrot) < lowstock:
+		
+		if num_items(Items.Pumpkin) < lowstock:
+			neededitem = Items.Pumpkin
+			toseed = Entities.Pumpkin
+			totrade = Items.Pumpkin_Seed
+
+		if num_items(Items.Carrot) < lowstock:
+			neededitem = Items.Carrot
+			toseed = Entities.Carrots
+			totrade = Items.Carrot_Seed
+
+		while num_items(neededitem) < highstock:
+			for i in range(get_world_size()):
+				for j in range(get_world_size()):
+					while get_ground_type() != Grounds.Soil:
+						till()
+					plant(toseed)
+					trade(totrade)
+					if can_harvest():
+						harvest()
+					if num_items(neededitem) > highstock:
+						break
+					move(North)
+				move(East)
+
+	# Get energy if too low on stock
+	if num_items(Items.Power) < lowstock:
+
+		while get_ground_type() != Grounds.Soil:
+			for i in range(get_world_size()):
+				for j in range(get_world_size()):
+					while get_ground_type() != Grounds.Soil:
+						till()
+					plant(Entities.Sunflower)
+					use_item(Items.Water_Tank)
+					trade(Items.Sunflower_Seed)
+					move(North)
+				move(East)
+
+		while num_items(Items.Power) < highstock:
+
+			maxpetals = 0
+
+			for i in range(get_world_size()):
+				for j in range(get_world_size()):
+					if measure() > maxpetals:
+						maxpetals = measure()
+					move(North)
+				move(East)
+		
+			for i in range(get_world_size()):
+				for j in range(get_world_size()):	
+					if measure() == maxpetals:
+						break
+					move(North)
+				if measure() == maxpetals:
+					break
+				move(East)
+		
+			if can_harvest():
+				harvest()
+				use_item(Items.Water_Tank)
+			plant(Entities.Sunflower)
+			trade(Items.Sunflower_Seed)
+			if num_items(Items.Power) > highstock:
+				break
+
+	clear()
+
+	while get_ground_type() != Grounds.Soil:
+		till()
+		plant(Entities.Bush)
+
+	while get_entity_type() == Entities.Bush:
+		trade(Items.Fertilizer)
+		use_item(Items.Fertilizer)
+
+    drone_direction = North
+
+    while(get_entity_type() != Entities.Treasure):
+        if(drone_direction == North):
+            if(move(West)):
+                drone_direction = West
+            else:
+                if(move(North)):
+                    drone_direction = North
+                elif(move(East)):
+                    drone_direction = East
+                elif(move(South)):
+                    drone_direction = South
+                elif(move(West)):
+                    drone_direction = West
+
+        elif(drone_direction == East):
+            if(move(North)):
+                drone_direction = North
+            else:
+                if(move(East)):
+                    drone_direction = East
+                elif(move(South)):
+                    drone_direction = South
+                elif(move(West)):
+                    drone_direction = West
+                elif(move(North)):
+                    drone_direction = North
+
+        elif(drone_direction == South):
+            if(move(East)):
+                drone_direction = East
+            else:
+                if(move(South)):
+                    drone_direction = South
+                elif(move(West)):
+                    drone_direction = West
+                elif(move(North)):
+                    drone_direction = North
+                elif(move(East)):
+                    drone_direction = East
+
+		elif(drone_direction == West):
+			if(move(South)):
+				drone_direction = South
+			else:
+				if(move(West)):
+					drone_direction = West
+				elif(move(North)):
+					drone_direction = North
+				elif(move(East)):
+					drone_direction = East
+				elif(move(South)):
+					drone_direction = South
+
+	harvest()
